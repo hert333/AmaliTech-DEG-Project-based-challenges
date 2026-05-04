@@ -34,6 +34,7 @@ Grafana Dashboard: http://localhost:3000
 
 ## 3. Dashboard Walkthrough
 image outputs for the graph
+
 ![Grafana Dashboard](./images/Grafana Dashbord.png/Prometheus.png/Prometheus alert.png)
  
 HTTP Request Rate: Tracks requests per second to visualize load on the logistics services in realtime.  
@@ -58,7 +59,9 @@ Command 1: View live logs from all services
 
 Bash
 docker compose logs -f
+
 JSON Output: 
+
 tracking-service-1  | {"level":"info","service":"tracking-service","msg":"Listening on port 3002"}
 notification-service-1  | {"level":"info","service":"notification-service","msg":"Listening on port 3003"}
 order-service-1         | {"level":"info","service":"order-service","msg":"Listening on port 3001"}
@@ -68,7 +71,9 @@ Command 2: Filter for errors in a specific service
 
 Bash
 docker compose logs tracking-service | grep -i "error"
+
 JSON Output:
+
 tracking-service-1 | {"level":"error","service":"tracking-service","msg":"Failed to connect to DB"}
 
 ## And right here is my WatchTower!!!
