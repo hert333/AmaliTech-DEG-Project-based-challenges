@@ -1,0 +1,91 @@
+{
+  "editable": true,
+  "panels": [
+    {
+      "title": "Order Service Health",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 0 },
+      "targets": [
+        { "expr": "up{job=\"reyla-logistics\", instance=\"order-service:3001\"}", "instant": true, "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
+          ],
+          "noValue": "OFFLINE",
+          "decimals": 0
+        }
+      },
+      "options": { "textMode": "value", "colorMode": "background", "graphMode": "none" }
+    },
+    {
+      "title": "Tracking Service Health",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 0 },
+      "targets": [
+        { "expr": "up{job=\"reyla-logistics\", instance=\"tracking-service:3002\"}", "instant": true, "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
+          ],
+          "noValue": "OFFLINE",
+          "decimals": 0
+        }
+      },
+      "options": { "textMode": "value", "colorMode": "background", "graphMode": "none" }
+    },
+    {
+      "title": "Notification Service Health",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        { "expr": "up{job=\"reyla-logistics\", instance=\"notification-service:3003\"}", "instant": true, "refId": "A" }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "DOWN", "color": "red" }, "1": { "text": "UP", "color": "green" } } }
+          ],
+          "noValue": "OFFLINE",
+          "decimals": 0
+        }
+      },
+      "options": { "textMode": "value", "colorMode": "background", "graphMode": "none" }
+    },
+    {
+      "title": "HTTP Request Rate (5m Average)",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 6 },
+      "targets": [
+        { 
+          "expr": "rate(http_requests_total[5m])", 
+          "legendFormat": "{{instance}}", 
+          "refId": "A" 
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["last"] }
+      }
+    },
+    {
+      "title": "5xx Error Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 6 },
+      "targets": [
+        { 
+          "expr": "rate(http_requests_total{status=~\"5..\"}[5m])", 
+          "legendFormat": "{{instance}}", 
+          "refId": "A" 
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["last"] }
+      }
+    }
+  ],
+  "title": "Reyla Logistics Overview",
+  "schemaVersion": 36
+}

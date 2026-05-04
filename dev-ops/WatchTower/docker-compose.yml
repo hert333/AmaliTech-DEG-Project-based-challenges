@@ -1,0 +1,88 @@
+
+services:
+  # 1. The Order Service
+  order-service:
+    build: ./app/order-service # Path to the app's code
+    ports:
+      - "${ORDER_PORT}:3001"   # Maps your PC port to container port
+    environment:
+      - PORT=3001              # Tells the code which port to listen on
+    networks:
+      - reyla-network          # Connects to our shared private network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # The Screen
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000" # Grafana usually lives on port 3000
+    volumes:
+      # We "link" our local folders to the ones inside the container
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - reyla-network
+    depends_on:
+      - prometheus # Don't start the screen until the data is ready
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+  # 2. The Tracking Service
+  tracking-service:
+    build: ./app/tracking-service
+    ports:
+      - "${TRACKING_PORT}:3002"
+    environment:
+      - PORT=3002
+    networks:
+      - reyla-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # 3. The Notification Service
+  notification-service:
+    build: ./app/notification-service
+    ports:
+      - "${NOTIFICATION_PORT}:3003"
+    environment:
+      - PORT=3003
+    networks:
+      - reyla-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+# Prometheus eye
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090" # will allow  Prometheus dashboard in your browser
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml # Connects your file to the container[cite: 4]
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    networks:
+      - reyla-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# This creates a "private hallway" so the apps can talk by name
+networks:
+  reyla-network:
+    driver: bridge

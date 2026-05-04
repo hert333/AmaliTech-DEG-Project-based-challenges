@@ -1,0 +1,32 @@
+groups:
+- name: reyla_alerts
+  rules:
+  # 1. Alert if any service is down for more than 1 minute
+  - alert: ServiceDown
+    expr: up == 0
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "System Alert: Service Connection Lost"
+      description: "One or more backend services in the Reyla Logistics stack are unreachable. Immediate investigation required."
+
+  # 2. Alert if more than 5% of requests are errors
+  - alert: HighErrorRate
+    expr: (sum by (service) (rate(http_requests_total{status=~"5.."}[5m])) / sum by (service) (rate(http_requests_total[5m]))) > 0.05
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Performance Alert: High Error Ratio Detected"
+      description: "The system is experiencing a failure rate exceeding 5% over the last 5 minutes."
+
+  # 3. Alert if Prometheus can't get metrics at all
+  - alert: ServiceNotScraping
+    expr: up{job="reyla-logistics"} == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Monitoring Alert: Data Scrape Failure"
+      description: "Prometheus is unable to collect metrics from the logistics cluster. Monitoring data may be stale."

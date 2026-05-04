@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  # 1. The Order Service
+  order-service:
+    build: ./app/order-service # Path to the app's code
+    ports:
+      - "${ORDER_PORT}:3001"   # Maps your PC port to container port
+    environment:
+      - PORT=3001              # Tells the code which port to listen on
+    networks:
+      - reyla-network          # Connects to our shared private network
+
+  # 2. The Tracking Service
+  tracking-service:
+    build: ./app/tracking-service
+    ports:
+      - "${TRACKING_PORT}:3002"
+    environment:
+      - PORT=3002
+    networks:
+      - reyla-network
+
+  # 3. The Notification Service
+  notification-service:
+    build: ./app/notification-service
+    ports:
+      - "${NOTIFICATION_PORT}:3003"
+    environment:
+      - PORT=3003
+    networks:
+      - reyla-networ
+rometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090" # This lets you see the Prometheus dashboard in your browser
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml # Connects your file to the container[cite: 4]
+    networks:
+      - reyla-network
+
+# This creates a "private hallway" so the apps can talk by name
+networks:
+  reyla-network:
+    driver: bridge
