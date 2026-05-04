@@ -1,7 +1,7 @@
 ## 1. Architecture Diagram
 This stack implements a full observability pipeline using Prometheus for scraping/alerting and Grafana for visualization.
 
-mermaid js
+```mermaid
 graph TD
     subgraph "Application Stack"
         O[order-service :3001]
@@ -20,6 +20,7 @@ graph TD
     P -->|Scrapes /metrics 15s| N
     P -->|Evaluates| A
     G -->|Queries Data| P
+```
 
 ## 2. Setup Instructions
 Copy the example environment file: cp .env.example .env
